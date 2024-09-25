@@ -3,12 +3,12 @@
 requires (1) SCAMP CLI for MP based bargrouping. (https://github.com/zpzim/SCAMP)
 
 ```
-{
+
 git clone https://github.com/zpzim/SCAMP
 cd SCAMP
 git submodule update --init --recursive
 mkdir build && cd build
-}
+
 ```
 
 
@@ -18,9 +18,9 @@ requires (3) access to matlab (either desktop installation or matlab online. Tes
 
 We provide a live script that generates figures similar to the main figures in the main text
 ```
-{
+
 dogma_demo.mlx
-}
+
 ```
 
 paper_figs/final provides scripts used to generate figures in the paper, i.e.
