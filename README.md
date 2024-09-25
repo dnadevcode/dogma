@@ -1,6 +1,6 @@
 # DOGMA
 
-requires SCAMP CLI for MP based bargrouping. (https://github.com/zpzim/SCAMP)
+requires (1) SCAMP CLI for MP based bargrouping. (https://github.com/zpzim/SCAMP)
 
 '''
 git clone https://github.com/zpzim/SCAMP
@@ -9,7 +9,9 @@ git submodule update --init --recursive
 mkdir build && cd build
 '''
 
-most recent version of HCA to compare alignment (https://gitlab.com/dnadev/hca) is included in subfolder (outer)
+requires (2) most recent version of HCA to compare alignment (https://gitlab.com/dnadev/hca) which is included in subfolder (outer)
+
+requires (3) access to matlab (either desktop installation or matlab online. Tested with MATLAB R2022a)
 
 We provide a live script that generates figures similar to the main figures in the main text
 '''
