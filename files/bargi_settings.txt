@@ -1,0 +1,20 @@
+# Settings BARGI
+1 | Plot figures | default.plotfigs
+1 | Save figures | default.savefigs
+1 | Save output in workspace | default.saveOutput
+10   | stretch factor max  %    | default.sF
+2.5   | stretchfactor step %     | default.sFstep
+300 | minimum overlap | default.minOverlap
+300 | minLen |  default.minLen
+kymo | method |     default.method
+20 | numframes |    default.numframes
+0 | depth |    default.depth 
+2 | Stouffer Z-score  cut-off| default.zscoreCutOff
+hierarchical | comparison method | default.comparisonMethod
+0.02 | Allowed scaling factor diff for merging | default.scDiffSetting
+50 |    Allowed pixel difference for merging | default.pxDifSetting
+0.08 | nupar | default.nupar
+0.01 | pthresh | default.pthresh
+32 | numworkers | default.numworkers
+[1 2 3]  | checklist items | clIdx
+1 | whether use gui | useGUI

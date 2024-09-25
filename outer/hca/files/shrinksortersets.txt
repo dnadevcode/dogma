@@ -1,0 +1,8 @@
+40 |  low=strict, high=loose, good=25-40 Minimum improvement in total residual error for each changepoint | default.shrinkThreshold
+0.9 |0-1 value, fraction of time elapsed to find stable region | default.restrict
+-0.5| slope below this is considered as "shrinking" | default.gd
+0.1 | how many more features included in mean | default.aroundFeat
+0 | Percentile for the first/last feature| default.pFeat
+10 | Min length of stable region | default.minStableRegion
+*.tif         |   file extension                                                      | fileext
+

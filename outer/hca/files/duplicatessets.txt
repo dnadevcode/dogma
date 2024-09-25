@@ -1,0 +1,5 @@
+##
+0.99 | CC similarity | default.Cthresh
+0.9 | Length coverage | default.Lthresh
+200 | minLen | default.minLen
+*.tif         |   file extension                                                      | fileext

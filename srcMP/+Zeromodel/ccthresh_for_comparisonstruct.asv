@@ -1,0 +1,31 @@
+function [ccthresh] = ccthresh_for_comparisonstruct(minLen,nuF,lengthsThry, pvalThresh)
+    % cc-thresh based on different barcode lengths
+    %
+    %   Args:
+    %       minLen - lengths
+    %       nuF - evd parameter (depends on psf)
+    %       lengthsThry - approximate length theory
+
+    if nargin < 4
+        pvalThresh = 0.01;
+    end
+
+    for i=1:length(minLen)
+
+
+    end
+
+    % pvalue params. should change based on psf
+%     ccthresh = 0.3;
+%     nuF = 0.13;
+    import Zeromodel.beta_ev_cdf;
+    pval = nan(1,length(comparisonStruct));
+    for i=1:length(comparisonStruct)
+
+        if comparisonStruct{i}.maxcoef(1) > ccthresh
+            pval(i) = 1-beta_ev_cdf(comparisonStruct{i}.maxcoef(1), nuF*lengthsbar(i), 1, 2*max(lengthsbar(i),lengthsThry(i)),1);
+        end
+    end
+
+end
+

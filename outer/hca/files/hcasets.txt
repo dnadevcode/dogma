@@ -1,0 +1,23 @@
+0.3             |          Average nm/bp extension                                      | default.meanBpExtNm
+6               |      Concentration Netropsin Mmolar                                   | default.concN
+0.02            |      Concentration YOYO Mmolar                                        | default.concY
+0.2             |      Concentration DNA  Mmolar                                        | default.concDNA
+300             |      PSF (nm)                                                         | default.psfSigmaWidthNm
+110             |      Pixel width (nm/px)                                              | default.pixelWidthNm
+ 3              |      Delta for barcode masks                                          | default.deltaCut
+ 4              |       Number of sigmas from mean                                      | default.widthSigmasFromMean
+ literature     |  Theory model                                                         | default.method
+16              |    Split data into exponents                                          | default.k 
+14              |   psf pixelization limit                                              | default.m 
+CB              | Pattern                                                               | default.pattern
+                | lambda fold                                                           | default.fold
+sequence.fasta | lambda name                                                            | default.name                                               
+ 1              |  Whether to compute free conncetrations                               | default.computeFreeConcentrations
+ 0              |       Whether DNA is linear                                           | default.isLinearTF
+1               | Compute bitmask                                                       | default.computeBitmask
+sequence.fasta  |                                                                       | testName
+*.fasta         |   file extension                                                      | fileext
+4               | ligand length                                                         | default.ligandLength
+495             | non-default psf  for quick theory                                   | default.psf
+[15:17]         |   Checklist items                                                     | clIdx 
+

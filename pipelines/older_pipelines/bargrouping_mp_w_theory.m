@@ -1,0 +1,1 @@
+% This script runs bargrouping mp vs theory

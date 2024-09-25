@@ -1,0 +1,244 @@
+%% p-val test single with the same parameters as figure Fig4.
+
+rng("default")
+
+% Parameters to generate random data:
+N = 100;% number of random fragments % default 200
+pxpsf = 2.72; % psf
+mL = 2850; % mean length of fragment % make sure long enough
+stdL = 100; %std of length of fragment
+snr = 2:1:10;
+stdE = 0.05; %0.02; % fragment length-rescale factor std 0.02
+isC = 1; % whether circular barcode
+tL = 200000; % rand length in px % default 10000
+minL = 150; % minimum length / same as minoverlap?
+stdM = 20; % additive noise mean
+sF = 0.9:0.025:1.1; % length re-scaling factor
+
+% option: generate new for each
+[bGrand, barLong, origPos, origFlip, origStr] = gen_synth_data(tL, pxpsf, ...
+    N, mL, stdL, stdM, stdN, stdE, isC); % keep all
+[bGrand2, barLong, origPos, origFlip, origStr] = gen_synth_data(tL, pxpsf, ...
+    N, mL, stdL, stdM, stdN, stdE, isC); % keep all
+i = 3;
+
+stdN = sqrt(stdM.^2/snr(i)); % additive noise std. Signal mean=200 is hardcoded
+
+import Core.gen_synth_data;
+
+
+% w = 100:20:400;
+lA = 300:20:700;
+lB = 800:50:2000;
+
+comparisonFun = @(x,y,z,w,u) unmasked_MASS_PCC(y,x,z,w,2^(4+nextpow2(length(x))),0,50);
+
+maxPCC = cell(length(lA),length(lB));
+osOutput = cell(length(lA),length(lB));
+pccs =  cell(length(lA),length(lB)); 
+for j = 1:length(lB)
+    for k=1:length(lA)
+    j
+    curLen = lA(k);
+    curLenB = lB(j);
+    %%
+
+    % cut bGrand to wanted length:
+    barcodes = cellfun(@(x) x.rawBarcode(x.rawBitmask),bGrand,'un',false);
+    barcodes = cellfun(@(x) x(randi(length(x)-curLen)+(1:curLen)),barcodes,'un',false); % random cut-out of length curLen
+    bitmasks = cellfun(@(x) true(size(x)), barcodes, 'un', 0);
+    barSynth = cell2struct([barcodes, bitmasks],{'rawBarcode','rawBitmask'},2);
+
+        % cut bGrand to wanted length:
+    barcodes2 = cellfun(@(x) x.rawBarcode(x.rawBitmask),bGrand2,'un',false);
+    barcodes2 = cellfun(@(x) x(randi(length(x)-curLenB)+(1:curLenB)),barcodes2,'un',false); % random cut-out of length curLen
+    bitmasks2 = cellfun(@(x) true(size(x)), barcodes2, 'un', 0);
+    barSynth2 = cell2struct([barcodes2, bitmasks2],{'rawBarcode','rawBitmask'},2);
+
+
+    for l=1:length(barSynth)
+        A = arrayfun(@(y) imresize(barSynth(l).rawBarcode(barSynth(l).rawBitmask),'Scale' ,[1 y]),sF,'un',false);
+        pcCur = 0;
+        for d=1:length(A)
+                pccThis = comparisonFun(A{d},barcodes2{1},ones(1,length(A{d})),ones(1,length(barcodes2{1})),2^16);
+                pcCur = max([pcCur,pccThis]);
+        end
+        pccs{j,k}(l) = pcCur;
+    end
+    end
+end
+
+save('/export/scratch/albertas/data_temp/bargrouping/PAPER_DATA/null/S1_data_updated3.mat','pccs','lA','lB');
+
+%%
+TT = length(lB)
+NN = length(lA);
+maxPCCAll = pccs;
+
+import Zeromodel.beta_ev_params;
+
+casetest=1;
+intV = 5; % degrees of freedom for chi2 test
+a_fit2 = zeros(TT,NN);n_fit2 = zeros(TT,NN);chi2Score = zeros(TT,NN);
+for j=1:TT
+    for k=1:NN
+        [parameters] = beta_ev_params(maxPCCAll{j,k}, lA(k)/2);
+
+        a_fit2(j,k) = parameters(1);
+        n_fit2(j,k) = parameters(2);
+    end
+end
+
+a_fit2 = a_fit2';
+n_fit2 = n_fit2';
+
+
+%% PLOT FIGURE P-VAL fit
+
+par1 = mean(a_fit2');
+
+par3 =  zeros(1,TT);
+for j=1:TT
+    nPar = n_fit2(:,j);
+    par3(j) = mean(nPar);
+end
+
+alphav = 0.136;
+alphaN = 1;
+
+f=figure('Position',[1 1 800 800])
+tiledlayout(3,2,'TileSpacing','tight')
+
+nexttile
+hold on
+plot(lA,par1./lA)
+xlabel('$L_A$','Interpreter','latex')
+ylabel('$\nu_{eff}/L_A$','Interpreter','latex')
+title('(A) $\alpha_{\nu}$ estimation','Interpreter','latex')
+plot(lA,alphav*ones(1,length(lA)),'--')
+xlim([lA(1) lA(end)])
+
+nexttile
+hold on
+
+
+plot(lB,par3./(2*lB))
+xlabel('$L_B$','Interpreter','latex')
+ylabel('$N_{eff}/(2\cdot L_B)$','Interpreter','latex')
+title('(B) $\alpha_{N}$ estimation','Interpreter','latex')
+plot(lB,alphaN*ones(1,length(lB)),'--')
+xlim([lB(1) lB(end)])
+%
+nexttile
+
+imagesc(lB,lA,a_fit2);
+title('(C) $\nu_{eff}$ heatmap','Interpreter','latex')
+ylabel('$L_A$','Interpreter','latex')
+xlabel('$L_B$','Interpreter','latex')
+colorbar;colormap(gray) 
+nexttile
+imagesc(lB,lA,n_fit2);
+colorbar;colormap(gray) 
+title('(D) $N_{eff}$ heatmap','Interpreter','latex')
+ylabel('$L_A$','Interpreter','latex')
+xlabel('$L_B$','Interpreter','latex')
+
+
+nexttile
+
+iy = 1;
+j = 1;
+xx=0.1:0.001:0.9;
+import Zeromodel.beta_ev_pdf;
+[p] = beta_ev_pdf(xx,a_fit2(j,iy), 1, n_fit2(j,iy));
+% f=figure,
+plot(xx,p)
+hold on
+histogram(pccs{j,iy},'Normalization','pdf')
+title('E) EVD fit histogram','Interpreter','latex')
+xlim([0.3 0.7])
+lgd = legend({'Functional EVD','PCC histogram'},'Interpreter','latex','Location','southoutside')
+
+print('FIGS/FigS1.eps','-depsc','-r300');
+
+%% next paragraph
+
+% 
+% 
+% par1 = zeros(1,TT);
+% par2 = zeros(1,TT);
+% 
+% % choose 1
+% % for j = 1:NN;
+% 
+% %     aPar = a_fit2(j,:)/minOverlapLen;
+%     
+% %     kk=1:NN;
+%     nPar = n_fit2(j,:);
+%     parEq = 2*(lB);
+%     
+%     % fnpar = polyfit(parEq,nPar,1) % fit a line.    
+%     mdl = fitlm(parEq,nPar,'intercept',false);
+%     fnpar(1) = mdl.Coefficients.Estimate(1);
+%     fnpar(2) = 0;
+% 
+%     par2(j) = [mdl.Coefficients.Estimate(1)];
+%     par1(j) = [mean(a_fit2(j,:))];
+% end
+% 
+% 
+% 
+% alphav = 0.14;
+% alphaN = 0.2;
+% 
+% f=figure('Position',[1 1 800 800])
+% tiledlayout(3,2,'TileSpacing','tight')
+% 
+% nexttile
+% hold on
+% plot(minL,par1./minL)
+% xlabel('$L_A$','Interpreter','latex')
+% ylabel('$\nu_{eff}/L_A$','Interpreter','latex')
+% title('(A) $\alpha_{\nu}$ estimation','Interpreter','latex')
+% plot(minL,alphav*ones(1,length(minL)),'--')
+% nexttile
+% hold on
+% plot(longL,par3./(2*longL))
+% xlabel('$L_B$','Interpreter','latex')
+% ylabel('$N_{eff}/(2\cdot L_B)$','Interpreter','latex')
+% title('(B) $\alpha_{N}$ estimation','Interpreter','latex')
+% plot(longL,alphaN*ones(1,length(longL)),'--')
+% 
+% nexttile
+% shortL = RAND_LENGTH_MIN+(0:TT-1)*gap;
+% longL = RAND_LENGTH_2+(0:NN-1)*gap;
+% imagesc(longL,shortL,a_fit2);
+% title('(C) $\nu_{eff}$ heatmap','Interpreter','latex')
+% ylabel('$L_A$','Interpreter','latex')
+% xlabel('$L_B$','Interpreter','latex')
+% colorbar;colormap(gray) 
+% nexttile
+% shortL = RAND_LENGTH_MIN+(0:TT-1)*gap;
+% longL = RAND_LENGTH_2+(0:NN-1)*gap;
+% imagesc(longL,shortL,n_fit2);
+% colorbar;colormap(gray) 
+% title('(D) $N_{eff}$ heatmap','Interpreter','latex')
+% ylabel('$L_A$','Interpreter','latex')
+% xlabel('$L_B$','Interpreter','latex')
+% 
+% nexttile
+% 
+% iy = 30;
+% j = 1;
+% xx=0.1:0.001:0.9;
+% import Zeromodel.beta_ev_pdf;
+% [p] = beta_ev_pdf(xx,a_fit2(j,iy), 1, n_fit2(j,iy));
+% % f=figure,
+% plot(xx,p)
+% hold on
+% histogram(maxPCCAll{j}{iy},'Normalization','pdf')
+% title('E) EVD fit histogram','Interpreter','latex')
+% xlim([0.2 0.6])
+% lgd = legend({'Functional EVD','PCC histogram'},'Interpreter','latex','Location','southoutside')
+% 
+% print('FIGS/FigS1.eps','-depsc','-r300');

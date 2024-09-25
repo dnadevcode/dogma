@@ -1,0 +1,227 @@
+%% p-val test single with the same parameters as figure Fig4.
+
+rng("default")
+
+% Parameters to generate random data:
+N = 20;% number of random fragments % default 200
+pxpsf = 2.72; % psf
+mL = 1250; % mean length of fragment % make sure long enough
+stdL = 100; %std of length of fragment
+snr = 2:1:10;
+stdE = 0.05; %0.02; % fragment length-rescale factor std 0.02
+isC = 1; % whether circular barcode
+tL = 200000; % rand length in px % default 10000
+minL = 150; % minimum length / same as minoverlap?
+stdM = 20; % additive noise mean
+sF = 0.9:0.025:1.1; % length re-scaling factor
+
+% option: generate new for each
+[bGrand, barLong, origPos, origFlip, origStr] = gen_synth_data(tL, pxpsf, ...
+    N, mL, stdL, stdM, stdN, stdE, isC); % keep all
+
+% snr that we choose here
+i = 3;
+
+stdN = sqrt(stdM.^2/snr(i)); % additive noise std. Signal mean=200 is hardcoded
+
+import Core.gen_synth_data;
+
+
+w = 100:20:400;
+lA = 500:50:800;
+maxPCC = cell(length(lA),length(w));
+osOutput = cell(length(lA),length(w));
+for j = 1:length(w)
+    for k=1:length(lA)
+    j
+    curLen = lA(k);
+    minOverlap = w(j);
+    %%
+
+
+    % cut bGrand to wanted length:
+    barcodes = cellfun(@(x) x.rawBarcode(x.rawBitmask),bGrand,'un',false);
+    barcodes = cellfun(@(x) x(randi(length(x)-curLen)+(1:curLen)),barcodes,'un',false); % random cut-out of length curLen
+    bitmasks = cellfun(@(x) true(size(x)), barcodes, 'un', 0);
+    barSynth = cell2struct([barcodes, bitmasks],{'rawBarcode','rawBitmask'},2);
+    tic
+    % bars = barGenMerged(cellfun(@(x) sum(x.rawBitmask),barGenMerged)>minOverlap); % only for those larger than min overlap
+    [oS] = calc_overlap_mp(barSynth,sF, minOverlap, [],29);
+    toc
+    localScore = [oS(:).score]; % local
+    lenA = [oS(:).lenA]; % lenA
+    lenB = [oS(:).lenB]; % lenB\
+    partialScore = [oS(:).partialScore];
+    partialLength = [oS(:).partialLength];
+    overlapLength = [oS(:).overlaplen];
+
+    idx = reshape(1:size(oS,1)*size(oS,2), size(oS,1),size(oS,2)); % from bg_test_1
+    idx = tril(idx);
+
+    localScore(idx(idx~=0)) = nan;
+    partialScore(idx(idx~=0)) = nan;
+
+    maxPCC{k,j} = localScore(~isnan(localScore));
+    osOutput{k,j} = oS;
+    end
+end
+%%
+save('/export/scratch/albertas/data_temp/bargrouping/PAPER_DATA/null/S2_data_equal_prob_bp.mat','maxPCC','osOutput','lA','w');
+
+% save('/export/scratch/albertas/data_temp/bargrouping/PAPER_DATA/null/S2_data_updated2.mat','maxPCC','osOutput','lA','w');
+
+%%
+
+import Zeromodel.beta_ev_params;
+
+casetest=1;
+a_fit2 = zeros(size(maxPCC,1),size(maxPCC,2)); % first dim lA, second dim w
+n_fit2 = zeros(size(maxPCC,1),size(maxPCC,2));
+for j = 1:length(w)
+    for k=1:length(lA)
+            [parameters] = beta_ev_params(maxPCC{k,j},w(j)/2);%(randLenMin+(k-1)*gap)/2);
+            a_fit2(k,j) = parameters(1);
+            n_fit2(k,j) = parameters(2);
+    end
+end
+
+a_fit2 = a_fit2';
+n_fit2 = n_fit2';
+
+% Similar plot for local pcc
+barL2 = lA;
+barL1 = lA;
+
+% figure,plot(mean(n_fit2')./(shortL-minOverlapLen))
+lW = length(w);
+par1 = zeros(1,lW);
+par2 = zeros(1,lW);
+par1CI = zeros(1,lW);
+% choose 1
+for j = 1:lW
+    nPar = n_fit2(j,:);  %looks more constant from w=200 
+    parEq = (2*(barL1));
+    
+    % fnpar = polyfit(parEq,nPar,1) % fit a line.    
+    mdl = fitlm(parEq,nPar,'intercept',false);
+    fnpar(1) = mdl.Coefficients.Estimate(1);
+    fnpar(2) = 0;
+
+    par2(j) = [mdl.Coefficients.Estimate(1)];
+    par1(j) = [mean(a_fit2(j,:))]; % par1 mean
+    par1CI(j) =  1.98*[std(a_fit2(j,:))/sqrt(length(a_fit2(j,:)))];
+end
+
+%
+ix = 11; % this is w = 300
+par3 = n_fit2(ix,:);% can only do par3 for fixed w or fixed len2, since it depends on both. Write this in the text!
+overlapL = w(ix);
+% minL = randLenMin+gap*([1:TT]-1);
+
+betanu = 0.085;
+betaN = 0.004;
+f=figure('Position',[1 1 800 800])
+tiledlayout(3,2,'TileSpacing','tight')
+
+nexttile
+hold on
+plot(w,par1./w)
+
+errorbar(w,par1./w,par1CI./w)
+xlabel('$w$','Interpreter','latex')
+ylabel('$\nu_{eff}/w$','Interpreter','latex')
+title('(A) $\beta_{\nu}$ estimation','Interpreter','latex')
+plot(w,betanu*ones(1,length(w)),'--')
+
+nexttile
+hold on
+% plot(barL1,par3./(2.*(max(barL1-overlapL(ix),barL2-overlapL(ix)))))
+plot(barL1,par3./((2.*((barL1-w(ix)).*((barL2-w(ix)))))))
+% plot(barL1,par3./((2.*((barL1).*((barL2))))))
+
+xlabel('$L_A$','Interpreter','latex')
+ylabel('$N_{eff}/(2(\cdot L_B-w)(L_A-w)$','Interpreter','latex') %(2(\cdot L_B-w)(L_A-w)
+title('(B) $\beta_{N}$ estimation','Interpreter','latex')
+% 
+plot(barL1,betaN*ones(1,length(barL1)),'--')
+
+nexttile
+% shortL = RAND_LENGTH_MIN+(0:TT-1)*gap;
+% longL = RAND_LENGTH_2+(0:NN-1)*gap;
+imagesc(barL1,w,a_fit2);
+title('(C) $\nu_{eff}$ heatmap','Interpreter','latex')
+colorbar;colormap(gray) 
+xlabel('$L_A$','Interpreter','latex')
+ylabel('$w$','Interpreter','latex')
+nexttile
+% shortL = RAND_LENGTH_MIN+(0:TT-1)*gap;
+% longL = RAND_LENGTH_2+(0:NN-1)*gap;
+imagesc(barL1,w,n_fit2);
+colorbar;colormap(gray) 
+title('(D) $N_{eff}$ heatmap','Interpreter','latex')
+xlabel('$L_A$','Interpreter','latex')
+ylabel('$w$','Interpreter','latex')
+
+nexttile
+% figure
+iy = 2;
+j = 11;
+xx=0.1:0.001:0.9;
+import Zeromodel.beta_ev_pdf;
+[p] = beta_ev_pdf(xx,a_fit2(j,iy), 1, n_fit2(j,iy));
+[p2] = beta_ev_pdf(xx,betanu*w(j), 1, betaN*(2.*(lA(iy)-w(j)).*(lB(iy)-w(j))));
+
+% f=figure,
+plot(xx,p,'LineWidth',2)
+hold on
+histogram(maxPCC{iy,j},'Normalization','pdf')
+xlabel('Max local PCC','Interpreter','latex')
+title('E) EVD fit histogram','Interpreter','latex')
+xlim([0.3 0.8])
+plot(xx,p2,'LineWidth',2)
+
+% lgd = legend({'Functional EVD','PCC histogram'},'Interpreter','latex','Location','southoutside')
+lgd = legend({'Fitted EVD','PCC histogram','Pre-calculated parameters EVD'},'Interpreter','latex','Location','southoutside')
+%%
+
+print('FIGS/FigS2.eps','-depsc','-r300');
+
+
+%%
+alphaNu = a_fit2(end,end);
+pthresh = 0.01;
+
+    % pval MP
+    alphaN = par2(end,end); %should be rather insensitive to specific value, check figure S5-S6;
+    import Zeromodel.beta_ev_cdf; % correct form?
+%     pvalfun = @(x,l1,l2,nuF,w) 1-beta_ev_cdf(x,nuF*w,1,nuF*2*(max(l1,l2)-w+1),0);
+    pvalfun = @(x) 1-beta_ev_cdf(x,alphaNu*minOverlap,1,alphaN*2*(curLen-minOverlap+1)*(curLen-minOverlap+1),0);
+
+    pvalLocal= pvalfun(maxPCC{end,end} )
+
+
+% par1 = zeros(1,length(w));
+% par2 = zeros(1,length(w));
+% 
+% for j = 1:length(w)
+%     
+%     import Zeromodel.beta_ev_params;
+%     [parameters] = beta_ev_params(maxPCC{j},w(j)/2);%(randLenMin+(k-1)*gap)/2);
+%     
+%     par1(j) = parameters(1)/w(j);
+%     par2(j) = parameters(2)./((2.*((curLen-w(j)).*((curLen-w(j))))));
+% 
+% end
+% %% Test plot
+
+% 
+% % %     
+% % [sortedVals, sortedIds,localScore,partialScore,lenA,lenB,partialLength,pvalLocal,pvalLeftOver, pvalCombined, sortedValsBad, sortedIdsBad] = ...
+% %     calculate_sorted_pvals(oS,minOverlap, alphaNu, pthresh); %localCCStruct
+% 
+% 
+%     stoufMP = norminv(1-pvalLocal);
+% %     stoufLeft = norminv(1-pvalLeftOver);
+% 
+%     figure,histogram(stoufMP);hold on
+% %     histogram(stoufLeft)

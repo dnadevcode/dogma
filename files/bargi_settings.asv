@@ -1,0 +1,15 @@
+# Settings BARGI
+1 | whether use gui | useGUI
+1 | Plot figures | default.plotfigs
+1 | Save figures | default.savefigs
+0.95 | sFmin | default.sFmin
+1.05 | sFmax | default.sFmax
+0.01 | sFstep | default.sFstep
+300 | minimum overlap | default.minOverlap
+300 | minLen |  default.minLen
+kymo | method |     default.method
+20 | numframes |    default.numframes
+0 | depth |    default.depth 
+2 | Stouffer Z-score | default.zscoreCutOff
+h
+[1 2]  | checklist items | clIdx
