@@ -11,19 +11,20 @@ mkdir build && cd build
 
 most recent version of HCA to compare alignment (https://gitlab.com/dnadev/hca) is included in subfolder (outer)
 
-We provide a live script that generates figures similar to the main figures in the main text
-'''
-dogma_demo.mlx
+We provide a live script that generates figures similar to 
 '''
 
-paper_figs/final provides scripts used to generate figures in the paper, i.e.
-fig1_ex creates Fig1,
+'''
 
-final_figure_N (N=3-7) creates figures Fig3-Fig7,
 
-These require additional pre-generated results data that will be put on a public database with the acceptance of the paper
+The scripts are placed in "pipelines" folder.
 
-Various other scripts are placed in "pipelines" folder.
+### Running via GUI:
+- bargi_gui
+The default settings are in files/bargi_settings.txt
+
+### Running via Script
+- bargi_run / bargrouping_islands_real_da
 
 ### bargroupingIslands:
 bargrouping_islands_synth (introduced version 0.3 - includes barcode islands plot)

@@ -1,4 +1,4 @@
-function [] = bargi_gui(useGUI, bargiSets)
+function [] = dogma_gui(useGUI, bargiSets)
     %   Replicates bargi_run, nicer graphical user interface
     %   Written by Albertas Dvirnas
 
@@ -165,7 +165,7 @@ function [] = bargi_gui(useGUI, bargiSets)
 
             disp(['N = ',num2str(length(  bargiStructSets.kymofolder )), ' sequences to run'])
 
-            bargi_run(bargiStructSets,[],[],tsV);
+            dogma_run(bargiStructSets,[],[],tsV);
     end
 
 

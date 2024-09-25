@@ -1,4 +1,4 @@
-function [] = bargi_run(bargiSets, pathMain, userDir,tsVisual)
+function [] = dogma_run(bargiSets, pathMain, userDir,tsVisual)
     % bargi_run - BARGrouping Islands run script
     %
     %   Example:
