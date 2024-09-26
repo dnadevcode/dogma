@@ -69,7 +69,7 @@ posShiftBad = calc_distance_scaled(oS,sortedIdsBad(1:N), synthStr{ixtest},theory
 % import Validation.calc_pos_dif;
 % posShiftBad = calc_pos_dif(oS,sortedIdsBad(1:N), synthStr{ixtest},theoryStruct{ixtest}{1}.length, N);
 %%
-f=figure('Position', [10 10 714 500]),g=tiledlayout(3,2,'TileSpacing','tight','Padding','none')
+f=figure('Position', [10 10 514 500]),g=tiledlayout(3,2,'TileSpacing','tight','Padding','none')
 
 
 

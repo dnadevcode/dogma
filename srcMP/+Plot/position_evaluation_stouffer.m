@@ -86,7 +86,7 @@ end
 lgd2=legend (valLegend,'Location','southoutside','Interpreter','latex');
 lgd2.Location = 'eastoutside';
 title(lgd2,'Threshold (px)','Interpreter','latex')
-xlabel('Pairwise overlap index (sorted by $s_{Stouffer}$)','Interpreter','latex')
+xlabel('Overlap index (sorted by $s_{Stouffer}$)','Interpreter','latex')
 title('(D) True positive rate','Interpreter','latex')
 ylim([0.3 1.05])
 

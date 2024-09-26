@@ -200,11 +200,15 @@ for idx=1:length(outConsensus)
     axis off
 
     set(gca,'xtick',[])
+
+    print('FIGS/Fig5.eps','-depsc','-r500');
+
     text(-650,size(consensusBlock,1)/2, 'Consensus','FontSize',7, 'FontName','Times',   'Color','black')
 
     xlim([1 maxConsensus])
 end
 
+%%
 nPixels = 1e5/500;% 500bp/px ;
 x = [maxConsensus-nPixels-2020 maxConsensus-2020];
 % x=[1 200]
@@ -214,163 +218,23 @@ plot(x+100,y+30,'Linewidth',2,'Color','white')
 text(x(1)+nPixels/10,y(1)+40, '100 kb','FontSize',8, 'FontName','Times',   'Color','white')
 set(gcf, 'Color', 'w')
 
+nexttile([1 3])
 
-
-
-%
-% 
-% nexttile([1 3])
-% 
-% maxConsensus = max(cellfun(@(x) size(x,2),outConsensus));
-% hold on
-% 
-% title('(A) Block representation for barcode island (1)', 'Interpreter','latex')
-% 
-% idx = 1;
-% 
-% % sort based on starting position
-% [pos,idxv] = sort(arrayfun(@(x) find(~isnan(outConsensus{idx}(x,:)),1,'first') +(find(~isnan(outConsensus{idx}(x,:)),1,'last')-find(~isnan(outConsensus{idx}(x,:)),1,'first'))/2,1:size(outConsensus{idx},1)));
-% % 
-% consensusToPlot1 = outConsensus{idx}(idxv,:);
-% 
-% % imagesc(consensusToPlot1);colormap(gray)
-% % xlim([1 size(consensusToPlot1,2)])
-% % ylim([1 size(consensusToPlot1,1)])
-% 
-%     consensusBlock  = repmat(mean(consensusToPlot1,'omitnan'),round(size(consensusToPlot1,1)/5),1);
-%     consensusEmptyBlock  = max(consensusToPlot1(:)).*ones(round(size(consensusBlock,1)/5),size(consensusBlock,2));
-% %     imagesc([consensusToPlot1;consensusEmptyBlock;consensusBlock]);colormap(gray)
-%     imagesc([consensusBlock;consensusEmptyBlock;consensusToPlot1;]);colormap(gray)
-% 
-% %     set(gca,'YDir','normal')
-%     ylim([0.5 size([consensusBlock;consensusEmptyBlock;consensusToPlot1;],1)+0.5])
-% 
-% 
-% % imagesc(outConsensus{idx}(idxv,:));colormap(gray)
-% axis off
-% 
-% set(gca,'xtick',[])
-% text(-500,size(consensusBlock,1)/2, 'Consensus','FontSize',7, 'FontName','Times',   'Color','black')
-% 
-% xlim([1 maxConsensus])
-% 
-% nexttile([1 3])
-% hold on
-% idx = 2;
-% 
-% % sort based on starting position
-% [pos,idxv] = sort(arrayfun(@(x) find(~isnan(outConsensus{idx}(x,:)),1,'first') +(find(~isnan(outConsensus{idx}(x,:)),1,'last')-find(~isnan(outConsensus{idx}(x,:)),1,'first'))/2,1:size(outConsensus{idx},1)));
-% % 
-% consensusToPlot2 = outConsensus{idx}(idxv,:);
-% 
-% % imagesc(consensusToPlot2);colormap(gray)
-% xlim([1 maxConsensus])
-% ylim([1 size(consensusToPlot2,1)])
-% % 
-% % imagesc(outConsensus{idx}(idxv,:));colormap(gray)
-% consensusToPlot1 = outConsensus{idx}(idxv,:);
-% 
-%   consensusBlock  = repmat(mean(consensusToPlot1,'omitnan'),round(size(consensusToPlot1,1)/5),1);
-%     consensusEmptyBlock  = max(consensusToPlot1(:)).*ones(round(size(consensusBlock,1)/5),size(consensusBlock,2));
-% %     imagesc([consensusToPlot1;consensusEmptyBlock;consensusBlock]);colormap(gray)
-%     imagesc([consensusBlock;consensusEmptyBlock;consensusToPlot1;]);colormap(gray)
-% 
-% %     set(gca,'YDir','normal')
-%     ylim([0.5 size([consensusBlock;consensusEmptyBlock;consensusToPlot1;],1)+0.5])
-% 
-% 
-% 
-% axis off
-% 
-% % set(gca,'xtick',[])
-% 
-% % xlim([1 size(consensusToPlot2,2)])
-% 
-% title('(B) Block representation for barcode island (2)', 'Interpreter','latex')
-% 
-% text(-500,size(consensusBlock,1)/2, 'Consensus','FontSize',7, 'FontName','Times',   'Color','black')
-% 
-% nexttile([1 3])
-% hold on
-% idx = 3;
-% 
-% % sort based on starting position
-% [pos,idxv] = sort(arrayfun(@(x) find(~isnan(outConsensus{idx}(x,:)),1,'first') +(find(~isnan(outConsensus{idx}(x,:)),1,'last')-find(~isnan(outConsensus{idx}(x,:)),1,'first'))/2,1:size(outConsensus{idx},1)));
-% % 
-% consensusToPlot3 = outConsensus{idx}(idxv,:);
-% 
-% % imagesc(consensusToPlot3);colormap(gray)
-% % xlim([1 size(consensusToPlot3,2)])
-% ylim([1 size(consensusToPlot3,1)])
-% xlim([1 maxConsensus])
-% 
-% % imagesc(outConsensus{idx}(idxv,:));colormap(gray)
-% consensusToPlot1 = outConsensus{idx}(idxv,:);
-% 
-%   consensusBlock  = repmat(mean(consensusToPlot1,'omitnan'),round(size(consensusToPlot1,1)/5),1);
-%     consensusEmptyBlock  = max(consensusToPlot1(:)).*ones(round(size(consensusBlock,1)/5),size(consensusBlock,2));
-% %     imagesc([consensusToPlot1;consensusEmptyBlock;consensusBlock]);colormap(gray)
-%     imagesc([consensusBlock;consensusEmptyBlock;consensusToPlot1;]);colormap(gray)
-% 
-% %     set(gca,'YDir','normal')
-%     ylim([0.5 size([consensusBlock;consensusEmptyBlock;consensusToPlot1;],1)+0.5])
-% 
-% 
-% 
-% % set(gca,'xtick',[])
-% set(gca,'ytick',[])
-% axis off
-% 
-% % set(gca,'ytick',[])
-% xlim([1 maxConsensus])
-% 
-% xlabel('Position (kb)')
-% 
-% xticksOriginal = get(gca, 'XTick');
-% xtickLabelsOriginal = get(gca, 'XTickLabel');% nexttile([1 2])
-% 
-% scaleFactor = 0.5;
-% % Scale the tick locations
-% xticksScaled = xticksOriginal * scaleFactor;
-% 
-% xtickLabelsScaled = cellstr(num2str(xticksScaled'));
-% set(gca, 'XTickLabel', xtickLabelsScaled);
-% % 
-% text(-500,size(consensusBlock,1)/2, 'Consensus','FontSize',7, 'FontName','Times',   'Color','black')
-% 
-% % xlim([1 size(consensusToPlot3,2)])
-% 
-% title('(C) Block representation for barcode island (3)', 'Interpreter','latex')
-% 
-% 
-% 
-% % nm = {'(D)','(E)','(F)'}
-% % for idx=1:3
-
-    nexttile([1 3])
-
-    par = {'x','o','|'      };% nexttile
+par = {'x','o','|'      };% nexttile
 hold on
 for idx=1:length(val)
-    
-
     plot(valRes{idx}.posTrue,valRes{idx}.bbSAll(:,1),par{idx});xlabel('Ground truth position (px)','Interpreter','latex');ylabel('Placement (px)','Interpreter','latex');
-
-%     plot(val{idx},     pDif{idx}(sorti{idx}),'blackx')
-%     xlabel('Position (px)')
-%     ylabel('pd')
-
-%     title([nm{idx} ' Distance for barcode island (',num2str(idx),')'], 'Interpreter','latex')
     xlim([1 length(theoryStruct{ixtest}{1}.rawBarcode)])
     title('(C) Dot plot for barcode islands','Interpreter','latex');
 end
-legend({'(1)','(2)','(3)'},'Interpreter','latex','Location','best')
+legend({'(1)','(2)'},'Interpreter','latex','Location','best')
 
 %%
+print('FIGS/Fig5.eps','-depsc','-r500');
 
 % print('-depsc','-tiff','-r350', '-vector','FIGS/Fig5.eps')%large filesize
 % exportgraphics(gcf,,'BackgroundColor','none','ContentType','vector')
-    print('FIGS/Fig5.eps','-depsc','-r600');
+%     print('FIGS/Fig5.eps','-depsc','-r600');
 
 
 %% Extra

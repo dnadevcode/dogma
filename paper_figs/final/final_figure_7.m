@@ -91,15 +91,17 @@ subMat = consensusToPlot2(:,shift+foundPos:shift+foundPos+bbSAll(selBarId,2)-bbS
 subMat(all(isnan(subMat), 2), :) = [];
 %%
 tableS= bbSAll;
-f=figure('Position', [10 10 714 500]);
-tiledlayout(3,1,'TileSpacing','compact','Padding','compact')
-nexttile
+f=figure('Position', [10 10 714 300]);
+tiledlayout(44,1,'TileSpacing','none','Padding','none')
+nexttile([5 1])
 imagesc(tableS(selBarId,1):tableS(selBarId,2),1,theoryStruct.rawBarcode(tableS(selBarId,1):tableS(selBarId,2)));colormap(gray)
 axis off
 title('(A) Part of theory corresponding to optimally matching barcode of barcode island (1)','Interpreter','latex')
 % xlim([1 12000])
+nexttile([4 1])
+axis off
 
-ax1=nexttile;
+ax1=nexttile([15 1]);
 % subMat(subMat<-4) = nan; % mask edge cases for better visibility
 % subMat(subMat>4) = nan;
 hold on
@@ -118,7 +120,7 @@ hold on
 % imagesc(tableS(selBarId,1):tableS(selBarId,2),1,subMat);colormap gray
 
     ylim([0.5 size([consensusBlock;consensusEmptyBlock;consensusToPlot1;],1)+0.5])
-    text(tableS(selBarId,1)-110,size(consensusBlock,1)/2, 'Consensus','FontSize',7, 'FontName','Times',   'Color','black')
+    text(tableS(selBarId,1)-95,size(consensusBlock,1)/2, 'Consensus','FontSize',7, 'FontName','Times',   'Color','black')
 xlim([tableS(selBarId,1) tableS(selBarId,2)])
 
 title('(B) Corresponding part of block representation of barcode island (1)','Interpreter','latex')
@@ -127,12 +129,15 @@ ax1.YAxis.Visible = 'off';
 nm = {'(C)','(D)','(E)','(F)'};
 
 % xlim([1 12000])
-nexttile
+nexttile([8 1])
+axis off
+
+nexttile([12 1])
 hold on
 for idx=1:length(val)
     
 
-    plot(valRes{idx}.posTrue,valRes{idx}.bbSAll(:,1),'x');xlabel('Ground truth position (px)','Interpreter','latex');ylabel('Placement (px)');
+    plot(valRes{idx}.posTrue,valRes{idx}.bbSAll(:,1),'x');xlabel('Ground truth position (px)','Interpreter','latex');ylabel('Placement (px)','Interpreter','latex');
 
 %     plot(val{idx},     pDif{idx}(sorti{idx}),'blackx')
 %     xlabel('Position (px)')

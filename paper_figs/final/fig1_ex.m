@@ -7,15 +7,16 @@
 % Schematics of de-novo assembly problem using DNA barcodes.
 rng('default')
 
-snr = 5; 
+snr = 1; 
 import Core.load_synth_data;
 [bgAll, bG, synthStr, synthStr2, theoryStruct] = load_synth_data(30,2.72,850,100,snr,0.05,1,2000,150,0,[]);
 % [bgAll, bG, synthStr, synthStr2, theoryStruct] = load_synth_data(50,2.72,850,100,snr,0.05,1,2000,150);
 
 
-% we have pre-generated, so just load pre-generated data
-% load('/export/scratch/albertas/data_temp/bargrouping/PAPER_DATA/synth_2023-11-28_09_43_54bml.mat');
-% load('/export/scratch/albertas/data_temp/bargrouping/PAPER_DATA/synth_2023-11-28_09_43_54resRun.mat');
+alphaNu1 = 0.09;
+alphaNu2 = 0.085;
+alphaN1 = 0.42;
+alphaN2 = 0.004;
 
 sets.minOverlap = 300;
 timestamp ='';
@@ -25,7 +26,7 @@ barcodeGen = bG{idxRun}';
 
 % both on local and global
 [sortedVals, sortedIds,localScore,partialScore,lenA,lenB,partialLength,pvalLocal,pvalLeftOver,pvalCombined,  sortedValsBad, sortedIdsBad] = ...
-    calculate_sorted_pvals(oS,nan, 0.08,0.01); %localCCStruct
+    calculate_sorted_pvals(oS,nan,  alphaNu1, pthresh,[],alphaN1,alphaNu2,alphaN2); %localCCStruct
 
 sortedVals = sortedVals(1:length(localScore));
 sortedVals(100:end) = nan; % keep less scores to show two islands
@@ -34,8 +35,8 @@ sortedValsGood = sortedVals(~isnan(sortedVals));
 sortedIdsGood  = sortedIds(~isnan(sortedVals));
 localScore = localScore(~isnan(sortedVals));
 
-sets.scDiffSetting = 0.02;
-sets.pxDifSetting = 20; %20
+sets.scDiffSetting = 0.05;
+sets.pxDifSetting = 50;
 
 import Core.barcode_island_output;
 [barsetGen, outConsensus, coverage, consensus, islandElts, islandPx,cGenAll,barcodeIslandsData, barStruct,barIslands] = ...
@@ -56,10 +57,11 @@ consSize = cellfun(@(x) size(x,1),outConsensus);
 
 %% Example to table (for fig2B):
 
+% f=figure('Position', [10 10 354 500]);
 
 %
-f=figure('Position', [10 10 714 600]);
-tiledlayout(65,2,'TileSpacing','tight','Padding','none')
+f=figure('Position', [10 10 450 500]);
+tiledlayout(60,2,'TileSpacing','tight','Padding','none')
 nexttile([26 1])
 hold on
 for i=1:length(barcodeGen)
@@ -79,13 +81,13 @@ nexttile([26 1])
 plot(Gtemp,'Layout','force','ArrowSize',5,'MarkerSize',1);
 title('(B) Graph representation', 'Interpreter','latex')
 
-text(0,4,'(1)')
-text(0,8,'(2)')
-text(3.2,8,'(3)')
-text(4.8,2.3,'(4)')
+text(2,4,'(1)')
+% text(0,8,'(2)')
+% text(3.2,8,'(3)')
+text(5.1,2.3,'(2)')
 
 
-nexttile([15 2])
+nexttile([10 2])
 
 hold on
 title('(C) Block representation of barcode island (1)', 'Interpreter','latex')
@@ -99,26 +101,13 @@ consensusToPlot = outConsensus{idx}(idxv,:);
 
 imagesc(consensusToPlot);colormap(gray)
 xlim([1 size(consensusToPlot,2)])
-% ylim([0 size(consensusToPlot,1)+1])
 
 imagesc(outConsensus{idx}(idxv,:));colormap(gray)
 set(gca,'xtick',[])
 
-% title('(C) Aligned bargroup island (1)', 'Interpreter','latex')
-
 import Plot.block_plot;
 
 consensusToPlot1 = block_plot(sI,1, outConsensus);
-
-% 
-% imagesc(consensusToPlot1);colormap(gray)
-% xlim([1 size(consensusToPlot1,2)])
-% ylim([0.5 size(consensusToPlot1,1)+0.5])
-% 
-% imagesc(outConsensus{idx}(idxv,:));colormap(gray)
-% set(gca,'xtick',[])
-% axis off
-
 
 % 
 nexttile([7 2])
@@ -139,7 +128,10 @@ x = [size(consensusToPlot1,2)-nPixels-100 size(consensusToPlot1,2)-100];
 y = [0.6 0.6 ];
 plot(x,y,'Linewidth',2,'Color','white')
 % text(x(1),y(1)+0.1, '10 $\mu m$','FontSize',12, 'Color','white','Interpreter','latex')
-text(x(1)+nPixels/5,y(1)+0.4, '100 kb','FontSize',14, 'FontName','Times',   'Color','white')
+
+text([0.88],[0.5], '100 kb','FontSize',10, 'FontName','Times',   'Color','white','Units','normalized')
+
+% text(x(1)+nPixels/5,y(1)+0.4, '100 kb','FontSize',14, 'FontName','Times',   'Color','white')
 set(gcf, 'Color', 'w')
 
 nexttile([10 2])
@@ -149,23 +141,6 @@ title('(E) Block representation of barcode island (2)', 'Interpreter','latex')
 import Plot.block_plot;
 
 consensusToPlot1 = block_plot(sI,2,outConsensus);
-
-% % get best indices
-% % [a,idx] = max(cellfun(@(x) size(x,1),outConsensus));
-% idx = sI(2);
-% 
-% % sort based on starting position
-% [pos,idxv] = sort(arrayfun(@(x) find(~isnan(outConsensus{idx}(x,:)),1,'first') +(find(~isnan(outConsensus{idx}(x,:)),1,'last')-find(~isnan(outConsensus{idx}(x,:)),1,'first'))/2,1:size(outConsensus{idx},1)));
-% % 
-% consensusToPlot = outConsensus{idx}(idxv,:);
-% 
-% imagesc(consensusToPlot);colormap(gray)
-% xlim([1 size(consensusToPlot1,2)])
-% ylim([0.5 size(consensusToPlot,1)+0.5])
-% 
-% imagesc(outConsensus{idx}(idxv,:));colormap(gray)
-% axis off
-% set(gca,'xtick',[])
 
 nexttile([7 2])
 
@@ -177,28 +152,18 @@ imagesc(consensus{idx})
 set(gca,'ytick',[])
 xlim([1 size(consensusToPlot1,2)])
 axis off
-% 
-% xxlabel('Position (kb)')
-% ticksOriginal = get(gca, 'XTick');
-% xtickLabelsOriginal = get(gca, 'XTickLabel');% nexttile([1 2])
-
-% scaleFactor = 0.5;
-% % Scale the tick locations
-% xticksScaled = xticksOriginal * scaleFactor;
-% 
-% xtickLabelsScaled = cellstr(num2str(xticksScaled'));
-% set(gca, 'XTickLabel', xtickLabelsScaled);
-% 
 
 nPixels = 1e5/500;% 500bp/px ;
 x = [size(consensusToPlot1,2)-nPixels-100 size(consensusToPlot1,2)-100];
 y = [0.6 0.6 ];
 plot(x,y,'Linewidth',2,'Color','white')
 % text(x(1),y(1)+0.1, '10 $\mu m$','FontSize',12, 'Color','white','Interpreter','latex')
-text(x(1)+nPixels/5,y(1)+0.4, '100 kb','FontSize',14, 'FontName','Times',   'Color','white')
+% text(x(1)+nPixels/5,y(1)+0.4, '100 kb','FontSize',14, 'FontName','Times',   'Color','white')
+text([0.82],[0.5], '100 kb','FontSize',10, 'FontName','Times',   'Color','white','Units','normalized')
+
 set(gcf, 'Color', 'w')
 
-print('FIGS/Fig1.eps','-depsc','-r500');
+print('FIGS/Fig1.eps','-depsc','-r600');
 
 %%
 extra = 0;
