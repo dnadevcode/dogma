@@ -29,11 +29,11 @@ pS = cell(1,length(valResSpec));
     pS{ix}.idx = cIt{ix}{end}.idx;
     [aaRep{ix}, ~ , ~,clusterBarcodesaa{ix},rawBarcodeIslandBlockRep] = barcode_island_consensus(barcodeGen,pS, ix, wminC);
 % end
-% 
+%
 outConsensus2 = aaRep{ix};
 
 [pos,idxv] = sort(arrayfun(@(x) find(~isnan(outConsensus2(x,:)),1,'first') +(find(~isnan(outConsensus2(x,:)),1,'last')-find(~isnan(outConsensus2(x,:)),1,'first'))/2,1:size(outConsensus2,1)));
-% 
+%
 consensusToPlot2 = outConsensus2(idxv,:);
 %
 
@@ -61,7 +61,7 @@ end
 
 if  stopZoneBar ~= starZone+featureLen-1
     stop = indexes(2)-indexes(1)+1;
-else 
+else
     stop = start+stopZoneBar-1;
 end
  indexes2 = foundPos+[start stop]-1;
@@ -79,7 +79,7 @@ imagesc(foundPos:foundPos+featureLen-1,1,bar(foundPos:foundPos+featureLen-1));co
 
 % imagesc(tableS(selBarId,1):tableS(selBarId,2),1,bar(tableS(selBarId,1):tableS(selBarId,2)));colormap(gray)
 axis off
-title(['(A) Part of theory corresponding to ', num2str(foundPos),'-',num2str(foundPos+featureLen-1), ' (px)'],'Interpreter','latex')
+title(['Part of theory corresponding to ', num2str(foundPos),'-',num2str(foundPos+featureLen-1), ' (px)'],'Interpreter','latex')
 % xlim([1 12000])
 % xlim([indexes2(1)+start indexes2(2)])
 %
@@ -111,11 +111,10 @@ imagesc(indexes2(1):indexes2(2),1,[consensusBlock; consensusEmptyBlock;consensus
 
 title(['Corresponding part of block representation of barcode island (',num2str(ix),')'],'Interpreter','latex')
 xlabel('Pos (px) along theory','Interpreter','latex')
-ax1.YAxis.Visible = 'off'; 
+ax1.YAxis.Visible = 'off';
 axis off;
 % nexttile
 % xlim([indexes2(1) indexes2(2)])
 
 
 end
-
