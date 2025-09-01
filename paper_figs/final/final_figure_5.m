@@ -1,4 +1,4 @@
-function [] = final_figure_5(resRun,bG,theoryStruct)
+function [] = final_figure_5(resRun,bG,theoryStruct,synthStr)
 %%
 alphaNu1 = 0.09;
 alphaNu2 = 0.085;
@@ -72,7 +72,7 @@ parfor ix = 1:length(cGenAll)
 end
 
 
-%% Validation. 
+%% Validation.
 sets.comparisonMethod = 'mass_pcc';
 bT{1}.rawBitmask = ones(1,length(tS{1}.rawBarcode));
 import Validation.scaled_pdif_vs_theory;
@@ -81,33 +81,33 @@ import Validation.scaled_pdif_vs_theory;
 % [val,sorti,valRes] = scaled_pdif_vs_theory(bT,tS{1},barcodeGen,barIslands,barcodeIslandsData,sF,sets);
 
 
-% 
-% 
+%
+%
 % % tS.length = length(tS.rawBitmask);
 % pDif = cell(1,length(barIslands));
 % sorti =  cell(1,length(barIslands));
 % val =  cell(1,length(barIslands));
 % tablesb = cell(1,length(barIslands));
 % for idx = 1:length(barIslands)
-% 
+%
 %     %%1) Run comparison (all barcodes)
-%     bars = barcodeGen(barIslands{idx}); 
+%     bars = barcodeGen(barIslands{idx});
 %     barx = barIslands{idx};
 %     sets.comparisonMethod = 'mass_pcc';
 %     sets.nuF = 0.14;
 %     [compI,rezI,~] = compare_to_t(bars,tS,sF,sets); % maybe calculate Stouffer score here also?
-% 
+%
 %     [a] = cellfun(@(x) x.pval,compI);
 %     [minV,minPos] = min(a);
-%     %% 
+%     %%
 %     selBarId = minPos;
-% 
+%
 %     %% extract tables
 %     bbS = compI{selBarId}.bestBarStretch;  % best bar stretch (bbS)
 %     bbO = (compI{selBarId}.or(1)~=barcodeIslandsData{idx}(selBarId,3))+1;
-% 
+%
 %     [bbSAll] = Core.update_sf_barset(barcodeIslandsData{idx}, bbS/barcodeIslandsData{idx}(selBarId,4), bbO);
-% 
+%
 %     % need to also update positions for all the synCur barcodes based on
 %     [tableS] = Core.synth_to_table(compI);
 %     [tableSUpd] = Core.update_sf_barset(tableS, tableS(selBarId,4)/bbS, 1); % does nothing
@@ -115,22 +115,22 @@ import Validation.scaled_pdif_vs_theory;
 %     % update synth table. Want to have the same / instead of this, should
 %     % update bbSall table?
 %     % [bbSAll] = update_sf_barset(bbSAll, 1/tableS(selBarId,4), 1);
-% 
-% 
+%
+%
 %     bbSAll(:,1:2) = bbSAll(:,1:2)-bbSAll(selBarId,1)+tableSUpd(selBarId,1); %
-%    
+%
 %     bestPosFound = bbSAll(:,1);
-%     
+%
 %     posTrue = tableSUpd(:,1);
-% 
+%
 %     pDif{idx} =  min([sqrt((posTrue-bestPosFound).^2) sqrt((posTrue+theoryStruct{ixtest}{1}.length-bestPosFound).^2)...
 %         sqrt((posTrue-theoryStruct{ixtest}{1}.length-bestPosFound).^2)]');
-% 
+%
 %     [val{idx},sorti{idx}] = sort(posTrue);
 %     tables{idx} = bbSAll;
-% 
+%
 % end
-% 
+%
 [cellfun(@(x) mean(x.pDif(x.pDif<30)),valRes)]
 [cellfun(@(x) std(x.pDif(x.pDif<30)),valRes)]
 
@@ -141,26 +141,26 @@ cellfun(@(x) length(x.pDif(x.pDif>=300))/length(x.pDif),valRes)
 % idx = 1
 % % figure
 % % imagesc(min( tables{idx}(:,1)):max( tables{idx}(:,2)),1,theoryStruct.rawBarcode(min( tables{idx}(:,1)):max( tables{idx}(:,2))));colormap(gray)
-% 
+%
 % import Core.consensus_from_table
 % [outConsensus2] = consensus_from_table(bbSAll,bars);
-% 
-% 
+%
+%
 % [pos,idxv] = sort(arrayfun(@(x) find(~isnan(outConsensus2(x,:)),1,'first') +(find(~isnan(outConsensus2(x,:)),1,'last')-find(~isnan(outConsensus2(x,:)),1,'first'))/2,1:size(outConsensus2,1)));
-% % 
+% %
 % consensusToPlot1 = outConsensus2(idxv,:);
-% 
+%
 % figure;imagesc(consensusToPlot1);colormap(gray)
-% 
-% 
+%
+%
 % foundPos = min(bestPosFound);
-% 
+%
 % shift = -min(bbSAll(:,1))+1;
 % foundPosEnd = max(bbSAll(:,2));
-% 
+%
 % subMat = consensusToPlot1(:,shift+foundPos:shift+foundPosEnd);
 % subMat(all(isnan(subMat), 2), :) = [];
-% 
+%
 % f = figure;
 % tiledlayout(5,1)
 % nexttile
@@ -186,10 +186,10 @@ for idx=1:length(outConsensus)
     nexttile([1 3])
     hold on
     title(['(' letters{idx} ') Block representation (', num2str(idx),')'], 'Interpreter','latex')
-        
+
     % sort based on starting position
     [pos,idxv] = sort(arrayfun(@(x) find(~isnan(outConsensus{idx}(x,:)),1,'first') +(find(~isnan(outConsensus{idx}(x,:)),1,'last')-find(~isnan(outConsensus{idx}(x,:)),1,'first'))/2,1:size(outConsensus{idx},1)));
-    % 
+    %
     consensusToPlot1 = outConsensus{idx}(idxv,:);
 
     consensusBlock  = repmat(mean(consensusToPlot1,'omitnan'),round(size(consensusToPlot1,1)/2),1);
@@ -238,7 +238,7 @@ print('FIGS/Fig5.eps','-depsc','-r500');
 
 
 %% Extra
-% 
+%
 idx = 2;
 figure
 hold on
@@ -267,11 +267,11 @@ import Plot.ref_based_assembly_islands;
 
 print(['FIGS/FigS6','.eps'],'-depsc','-r500');
 
-%% 
+%%
 for idx = 1:2;
-  bars = barcodeGen(barIslands{idx}); 
+  bars = barcodeGen(barIslands{idx});
     barx = barIslands{idx};
-   
+
 [outConsensus2, coverage2, pval3,f] = gen_reference_based_assembly(bars,synthStr{ixtest}(barx),theoryStruct{ixtest},'test11',inf);
     print(['FIGS/Fig5S_', num2str(idx), '.eps'],'-depsc','-r500');
 
@@ -293,4 +293,3 @@ import Validation.plot_compare_to_thry;
  import Validation.plot_compare_to_thry;
  plot_compare_to_thry(f,positions(2),2,valRes,cIt,barcodeGen,barcodeIslandsData,wminC,tS,featureLen,0)
      print('FIGS/FigS20.eps','-depsc','-r500');
-
