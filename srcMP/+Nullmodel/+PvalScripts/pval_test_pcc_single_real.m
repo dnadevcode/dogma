@@ -5,7 +5,6 @@ load('/export/scratch/albertas/data_temp/bargrouping/PAPER_DATA/null/S1_data_upd
 alphav = 0.085;
 alphaN = 0.15;
 
-
 TT = length(lB)
 NN = length(lA);
 maxPCCAll = pccs;
@@ -24,9 +23,12 @@ for j=1:TT
     end
 end
 
+lenA = length(lA);
 % PLOT FIGURE P-VAL fit
 par1 = mean(a_fit2,1);
 par1CI =  1.98*[std(a_fit2,[],1)./sqrt(lenB)];
+
+lenB = length(lB);
 
 par3 = mean(n_fit2,2);
 par3CI =  1.98*[std(n_fit2,[],2)./sqrt(lenA)];
@@ -69,10 +71,10 @@ imagesc(lB,lA,a_fit2);
 title('(C) $\nu_{eff}$ heatmap','Interpreter','latex')
 ylabel('$L_A$','Interpreter','latex')
 xlabel('$L_B$','Interpreter','latex')
-colorbar;colormap(gray) 
+colorbar;colormap(gray)
 nexttile
 imagesc(lB,lA,n_fit2);
-colorbar;colormap(gray) 
+colorbar;colormap(gray)
 title('(D) $N_{eff}$ heatmap','Interpreter','latex')
 ylabel('$L_A$','Interpreter','latex')
 xlabel('$L_B$','Interpreter','latex')
@@ -98,7 +100,7 @@ plot(xx,p2,'LineWidth',2)
 
 lgd = legend({'Fitted EVD','PCC histogram','Pre-calculated parameters EVD'},'Interpreter','latex','Location','southoutside')
 
-print('FIGS/FigS1Real.eps','-depsc','-r500');
+print('FIGS/FigS1RealOLD.eps','-depsc','-r500');
 
 %%
 load('/export/scratch/albertas/data_temp/bargrouping/PAPER_DATA/null/S2_data_updated2Real.mat')
@@ -115,12 +117,12 @@ for j = 1:length(w)
     end
 end
 
-lenA = length(lA);
+lenA = length(lB);
 lenw = length(w);
 
 % PLOT FIGURE P-VAL fit
 par1 = mean(a_fit2,1);
-par1CI =  1.98*[std(a_fit2,[],1)./sqrt(lenA)];
+par1CI =  1.98*[std(a_fit2,[],1)./sqrt(lenB)];
 
 %
 ix = 11; % this is w = 300
@@ -134,49 +136,49 @@ import Nullmodel.PvalScripts.plot_evd_figure_2;
 [f] = plot_evd_figure_2(maxPCC, a_fit2, n_fit2, 4, ix, lA, w, par1, par3, par1CI,betanu,betaN)
 print('FIGS/FigS2Real.eps','-depsc','-r500');
 
-% 
+%
 % f=figure('Position',[1 1 800 800])
 % tiledlayout(3,2,'TileSpacing','tight')
-% 
+%
 % nexttile
 % hold on
 % plot(w,par1./w)
-% 
+%
 % errorbar(w,par1./w,par1CI./w)
 % xlabel('$w$','Interpreter','latex')
 % ylabel('$\nu_{eff}/w$','Interpreter','latex')
 % title('(A) $\beta_{\nu}$ estimation','Interpreter','latex')
 % plot(w,betanu*ones(1,length(w)),'--')
-% 
+%
 % nexttile
 % hold on
 % % plot(barL1,par3./(2.*(max(barL1-overlapL(ix),barL2-overlapL(ix)))))
 % plot(barL1,par3./((2.*((barL1-w(ix)).*((barL2-w(ix)))))))
 % % plot(barL1,par3./((2.*((barL1).*((barL2))))))
-% 
+%
 % xlabel('$L_A$','Interpreter','latex')
 % ylabel('$N_{eff}/(2(\cdot L_B-w)(L_A-w)$','Interpreter','latex') %(2(\cdot L_B-w)(L_A-w)
 % title('(B) $\beta_{N}$ estimation','Interpreter','latex')
-% % 
+% %
 % plot(barL1,betaN*ones(1,length(barL1)),'--')
-% 
+%
 % nexttile
 % % shortL = RAND_LENGTH_MIN+(0:TT-1)*gap;
 % % longL = RAND_LENGTH_2+(0:NN-1)*gap;
 % imagesc(barL1,w,a_fit2);
 % title('(C) $\nu_{eff}$ heatmap','Interpreter','latex')
-% colorbar;colormap(gray) 
+% colorbar;colormap(gray)
 % xlabel('$L_A$','Interpreter','latex')
 % ylabel('$w$','Interpreter','latex')
 % nexttile
 % % shortL = RAND_LENGTH_MIN+(0:TT-1)*gap;
 % % longL = RAND_LENGTH_2+(0:NN-1)*gap;
 % imagesc(barL1,w,n_fit2);
-% colorbar;colormap(gray) 
+% colorbar;colormap(gray)
 % title('(D) $N_{eff}$ heatmap','Interpreter','latex')
 % xlabel('$L_A$','Interpreter','latex')
 % ylabel('$w$','Interpreter','latex')
-% 
+%
 % nexttile
 % % figure
 % iy = 2;
@@ -192,12 +194,12 @@ print('FIGS/FigS2Real.eps','-depsc','-r500');
 % % title('E) EVD fit histogram','Interpreter','latex')
 % % xlim([0.2 0.8])
 % % lgd = legend({'Functional EVD','PCC histogram'},'Interpreter','latex','Location','southoutside')
-% 
+%
 % xx=0.1:0.001:0.9;
 % import Zeromodel.beta_ev_pdf;
 % [p] = beta_ev_pdf(xx,a_fit2(j,iy), 1, n_fit2(j,iy));
 % [p2] = beta_ev_pdf(xx,betanu*w(j), 1, betaN*(2.*(lA(iy)-w(j)).*(lB(iy)-w(j))));
-% 
+%
 % % f=figure,
 % plot(xx,p,'LineWidth',2)
 % hold on
@@ -206,9 +208,9 @@ print('FIGS/FigS2Real.eps','-depsc','-r500');
 % title('E) EVD fit histogram','Interpreter','latex')
 % xlim([0.2 0.8])
 % plot(xx,p2,'LineWidth',2)
-% 
-% 
+%
+%
 % lgd = legend({'Fitted EVD','PCC histogram','Pre-calculated parameters EVD'},'Interpreter','latex','Location','southoutside')
-% 
-% 
-% 
+%
+%
+%

@@ -32,7 +32,7 @@ final_figure_3(sets, resRun, bG,snrv)
 final_figure_4(sets, resRun, bG,synthStr,theoryStruct)
 
 % Fig5
-final_figure_5(resRun,bG,theoryStruct)
+final_figure_5(resRun,bG,theoryStruct,synthStr)
 
     %% make sure that above also calcc for this
 timestamp = datestr(clock(), 'yyyy-mm-dd_HH_MM_SS'); % timestamp for results
@@ -101,7 +101,7 @@ idx = 3;
 % it's correct
 
 
-bars = barcodeGen(barIslands{idx}); 
+bars = barcodeGen(barIslands{idx});
 
 barx = barIslands{idx};
 
@@ -120,7 +120,7 @@ for i=1:length(barsC)
      if newData(i,3)==2
          barsC{i}.rawBarcode = fliplr(barsC{i}.rawBarcode);
          barsC{i}.rawBitmask = fliplr(barsC{i}.rawBitmask);
-     end         
+     end
 end
 
 % compare to theory: either pcc or mp
@@ -132,7 +132,7 @@ posFound = cellfun(@(x) x.pos(1), comparisonStruct);
 
 figure,plot(posTrue-posFound)
 
-% so individual ones are mapped very nicely. 
+% so individual ones are mapped very nicely.
 
 %% Now, let's fix one of the individual barcodes and recover the found
 % positions from it
@@ -143,8 +143,8 @@ bbO = (comparisonStruct{ix}.or(1)~=barcodeIslandsData{idx}(ix,3))+1;
 
 % idx=1
 
-% bars = barcodeGen(barIslands{idx}); 
-% 
+% bars = barcodeGen(barIslands{idx});
+%
 % barx = barIslands{idx};
 
 
@@ -167,7 +167,7 @@ import Core.update_sf_barset;
 
 idx = 3;
 
-bars = barcodeGen(barIslands{idx}); 
+bars = barcodeGen(barIslands{idx});
 
 barx = barIslands{idx};
 
@@ -181,13 +181,13 @@ for j=1:length(sF)
         lenBarTested = length( barsC{i}.rawBarcode );
          barsC{i}.rawBarcode = interp1(barsC{i}.rawBarcode, linspace(1,lenBarTested,lenBarTested*newData(i,4)));
          barsC{i}.rawBitmask =  barsC{i}.rawBitmask (round(linspace(1,lenBarTested,lenBarTested*newData(i,4))));
-    
+
          if newData(i,3)==2
              barsC{i}.rawBarcode = fliplr(barsC{i}.rawBarcode);
              barsC{i}.rawBitmask = fliplr(barsC{i}.rawBitmask);
-         end         
+         end
     end
-    
+
     distRes = [];
     for i=1:length(barsC)
         [maxcoef, pos, or, secondPos, lenM,distRes{i}] = masked_MASS_PCC(tS{1}.rawBarcode, barsC{i}.rawBarcode, logical(barsC{i}.rawBitmask),true(1,length(tS{1}.rawBarcode)),2^15,0,0);
@@ -200,7 +200,7 @@ end
 %%
 import Core.create_consensus
 [consensusBar] = create_consensus(barcodeIslandsData{idx}, bars);
-  
+
 
 
 
