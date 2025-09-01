@@ -1,6 +1,17 @@
 # DOGMA
 
-requires (1) SCAMP CLI for MP based bargrouping. (https://github.com/zpzim/SCAMP)
+All the main figures in the paper are generated via following script 
+
+```
+paper_results_figs.m
+
+```
+
+This requires synth_2024-09-05_09_03_37resRun.mat, experiment_data_oS.mat and experiment_data_barcodeGen.mat.
+
+
+
+DOGMA requires (1) SCAMP CLI for MP based bargrouping. (https://github.com/zpzim/SCAMP)
 
 ```
 
@@ -26,9 +37,7 @@ dogma_demo.mlx
 paper_figs/final provides scripts used to generate figures in the paper, i.e.
 fig1_ex creates Fig1,
 
-final_figure_N (N=3-7) creates figures Fig3-Fig7,
-
-These require additional pre-generated results data that will be put on a public database with the acceptance of the paper
+final_figure_N (N=3-7) creates figures Fig3-Fig7.
 
 Various other scripts are placed in "pipelines" folder.
 

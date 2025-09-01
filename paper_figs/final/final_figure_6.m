@@ -1,14 +1,14 @@
 % load data. Here it changes to folder with external data. For
 % reproducibility, the '.mat' file with the overlaps can be downloaded
-cd('/export/scratch/albertas/data_temp/bargrouping/PAPER_DATA/')
+% cd('/export/scratch/albertas/data_temp/bargrouping/PAPER_DATA/')
 
 %
-load('3all_2023-11-24_12_38_55.mat','oS','barcodeGen')
+% load('3all_2023-11-24_12_38_55.mat','oS','barcodeGen')
 % load('3_2023-11-22_11_34_44resRun.mat')
 % load('3_individualdays.mat')
 
-% load('experiment_data_oS.mat');
-% load('experiment_data_barcodeGen.mat');
+load('experiment_data_oS.mat');
+load('experiment_data_barcodeGen.mat');
 
 
 %% Parameters for the run. Check that these to be the same as Table 2 in the paper

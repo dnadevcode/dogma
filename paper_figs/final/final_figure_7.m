@@ -207,6 +207,10 @@ selBarId = valRes{ix}.selBarId;
 bbSAll = valRes{ix}.bbSAll;
 tableS = valRes{ix}.tableS;
 
+runmore=0;
+if runmore
+
+
     %% S8
     ix = 2;
 import Core.barcode_island_consensus;
@@ -269,3 +273,7 @@ plot(val{idx},     valRes{idx}.pDif(sorti{idx}),'blackx')
     ylabel('pd')
 
     title(['Distance for barcode island (',num2str(idx),')'], 'Interpreter','latex')
+
+else
+
+end
