@@ -7,8 +7,8 @@ paper_results_figs.m
 
 ```
 
-This requires synth_2024-09-05_09_03_37resRun.mat, experiment_data_oS.mat and experiment_data_barcodeGen.mat.
-
+This requires synth_2024-09-05_09_03_37resRun.mat, experiment_data_oS.mat and experiment_data_barcodeGen.mat which are available via 
+Dvirnas, Albertas (2025). Data for DOGMA: <i>de novo </i>assembly of densely labelled optical DNA maps using a matrix profile approach. figshare. Dataset. https://doi.org/10.6084/m9.figshare.30051553
 
 
 DOGMA requires (1) SCAMP CLI for MP based bargrouping. (https://github.com/zpzim/SCAMP)
